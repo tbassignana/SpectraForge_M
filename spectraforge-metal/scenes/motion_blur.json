@@ -1,0 +1,79 @@
+{
+  "materials": [
+    {
+      "type": "lambertian",
+      "albedo": [0.4, 0.4, 0.4],
+      "_comment": "Ground"
+    },
+    {
+      "type": "lambertian",
+      "albedo": [0.8, 0.2, 0.2],
+      "_comment": "Red (stationary)"
+    },
+    {
+      "type": "lambertian",
+      "albedo": [0.2, 0.2, 0.9],
+      "_comment": "Blue (moving)"
+    },
+    {
+      "type": "lambertian",
+      "albedo": [0.2, 0.9, 0.2],
+      "_comment": "Green (fast moving)"
+    },
+    {
+      "type": "metal",
+      "albedo": [0.95, 0.95, 0.95],
+      "roughness": 0.1,
+      "_comment": "Chrome (diagonal)"
+    }
+  ],
+  "spheres": [
+    {
+      "center": [0, -1000, 0],
+      "radius": 1000,
+      "material": 0,
+      "_comment": "Ground"
+    },
+    {
+      "center": [-3, 0.5, 0],
+      "radius": 0.5,
+      "material": 1,
+      "_comment": "Stationary red sphere"
+    },
+    {
+      "center": [-1, 0.5, 0],
+      "radius": 0.5,
+      "material": 2,
+      "velocity": [2, 0, 0],
+      "_comment": "Moving blue sphere"
+    },
+    {
+      "center": [1, 0.5, 0],
+      "radius": 0.5,
+      "material": 3,
+      "velocity": [4, 0, 0],
+      "_comment": "Fast green sphere"
+    },
+    {
+      "center": [0, 1.5, -2],
+      "radius": 0.8,
+      "material": 4,
+      "velocity": [1, -2, 1],
+      "_comment": "Chrome falling diagonally"
+    }
+  ],
+  "camera": {
+    "position": [0, 3, 10],
+    "look_at": [0, 0.5, 0],
+    "up": [0, 1, 0],
+    "fov": 35,
+    "aperture": 0,
+    "focus_distance": 10,
+    "shutter": [0, 1]
+  },
+  "settings": {
+    "samples": 128,
+    "max_depth": 10,
+    "sky_gradient": true
+  }
+}

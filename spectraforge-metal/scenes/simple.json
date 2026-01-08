@@ -1,0 +1,74 @@
+{
+  "materials": [
+    {
+      "type": "lambertian",
+      "albedo": [0.5, 0.5, 0.5]
+    },
+    {
+      "type": "lambertian",
+      "albedo": [0.8, 0.3, 0.3]
+    },
+    {
+      "type": "metal",
+      "albedo": [0.8, 0.8, 0.8],
+      "roughness": 0.1
+    },
+    {
+      "type": "dielectric",
+      "ior": 1.5
+    },
+    {
+      "type": "emissive",
+      "albedo": [1.0, 1.0, 1.0],
+      "emission": {
+        "color": [1.0, 0.9, 0.7],
+        "intensity": 5.0
+      }
+    }
+  ],
+  "spheres": [
+    {
+      "center": [0, -1000, 0],
+      "radius": 1000,
+      "material": 0,
+      "_comment": "Ground plane"
+    },
+    {
+      "center": [0, 1, 0],
+      "radius": 1.0,
+      "material": 3,
+      "_comment": "Glass sphere"
+    },
+    {
+      "center": [-3, 1, 0],
+      "radius": 1.0,
+      "material": 1,
+      "_comment": "Red diffuse sphere"
+    },
+    {
+      "center": [3, 1, 0],
+      "radius": 1.0,
+      "material": 2,
+      "_comment": "Metal sphere"
+    },
+    {
+      "center": [0, 4, 0],
+      "radius": 1.0,
+      "material": 4,
+      "_comment": "Light source"
+    }
+  ],
+  "camera": {
+    "position": [8, 3, 8],
+    "look_at": [0, 1, 0],
+    "up": [0, 1, 0],
+    "fov": 35,
+    "aperture": 0.1,
+    "focus_distance": 11
+  },
+  "settings": {
+    "samples": 64,
+    "max_depth": 10,
+    "sky_gradient": true
+  }
+}

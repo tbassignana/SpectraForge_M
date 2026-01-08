@@ -4,7 +4,7 @@ You are an expert systems programmer tasked with rewriting the SpectraForge ray 
 
 ## Reference Implementation
 
-The existing Python implementation in `spectraforge/` contains all the algorithms you need:
+The existing Python implementation in `spectraforge_M/` contains all the algorithms you need:
 - `vec3.py` - Vector math (translate to Metal's `float3`)
 - `ray.py` - Ray structure
 - `shapes.py` - Sphere, Plane, Triangle, Box, Cylinder, Cone intersection
@@ -103,6 +103,9 @@ spectraforge-metal/
 - [ ] Interactive camera controls
 - [ ] Scene file loading (JSON format from Python version)
 - [ ] Benchmarking vs Python implementation
+- [ ] Connecting new back end to UI and verifying functionality
+
+### Phase 8: This is an infinite loop for you to analyze the codebase to make performance enhancements as you see fit
 
 ## Technical Requirements
 

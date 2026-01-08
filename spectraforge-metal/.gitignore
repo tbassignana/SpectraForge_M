@@ -1,0 +1,21 @@
+# Build artifacts
+build/
+*.o
+*.dSYM/
+
+# Render output
+*.png
+*.hdr
+*.exr
+output/
+
+# macOS
+.DS_Store
+._*
+
+# Editor
+*.swp
+*~
+
+# Override parent gitignore - include lib/ for cJSON
+!lib/

@@ -8,12 +8,12 @@ let isRendering = false;
 let pollInterval = null;
 let currentImageData = null;
 
-// Quality presets (tuned for pure Python performance)
+// Quality presets (tuned for Metal GPU - 1000x faster than Python)
 const QUALITY_PRESETS = {
-    preview: { width: 160, height: 120, samples: 4, maxDepth: 5 },   // ~10-20 sec
-    draft:   { width: 240, height: 180, samples: 8, maxDepth: 8 },   // ~1-2 min
-    medium:  { width: 320, height: 240, samples: 16, maxDepth: 10 }, // ~5-10 min
-    high:    { width: 480, height: 360, samples: 32, maxDepth: 15 }  // ~20-40 min
+    preview: { width: 800, height: 600, samples: 16, maxDepth: 10 },    // ~0.1s
+    draft:   { width: 1280, height: 720, samples: 32, maxDepth: 10 },   // ~0.2s
+    medium:  { width: 1920, height: 1080, samples: 64, maxDepth: 10 },  // ~0.4s
+    high:    { width: 1920, height: 1080, samples: 256, maxDepth: 15 }  // ~1.5s
 };
 
 // DOM Elements
@@ -113,6 +113,12 @@ function updateCameraForScene() {
         setCameraValues(13, 2, 3, 0, 0, 0, 20, 0.1, 10);
     } else if (scene === 'cornell') {
         setCameraValues(0, 5, 15, 0, 5, 0, 40, 0, 15);
+    } else if (scene === 'pbr') {
+        setCameraValues(8, 3, 8, 0, 0.5, 0, 30, 0, 10);
+    } else if (scene === 'dof') {
+        setCameraValues(6, 2, 6, 0, 1, 0, 30, 0.15, 6);
+    } else if (scene === 'motion') {
+        setCameraValues(10, 3, 10, 0, 0.5, 0, 25, 0, 12);
     } else {
         setCameraValues(5, 2, 5, 0, 0, 0, 30, 0, 5);
     }
