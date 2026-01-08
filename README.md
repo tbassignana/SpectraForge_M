@@ -4,8 +4,6 @@
 
 Achieves **3.9 billion rays/second** on M4 Pro with full path tracing, BVH acceleration, and real-time preview.
 
-![Demo Render](output/render.png)
-
 ## Features
 
 - **Path Tracing** - Global illumination with multiple bounces
