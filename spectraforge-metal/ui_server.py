@@ -286,20 +286,10 @@ def get_platform_info() -> Dict[str, Any]:
 class SpectraForgeHandler(SimpleHTTPRequestHandler):
     """HTTP request handler for SpectraForge Metal UI."""
 
-    # Try multiple locations for static files
     @property
     def static_dir(self):
-        # First try the spectraforge Python package static dir
-        python_static = Path(__file__).parent.parent / 'spectraforge' / 'static'
-        if python_static.exists():
-            return python_static
-
-        # Fall back to local static dir
-        local_static = Path(__file__).parent / 'static'
-        if local_static.exists():
-            return local_static
-
-        return python_static  # Default
+        """Get the static files directory."""
+        return Path(__file__).parent / 'static'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(self.static_dir), **kwargs)
