@@ -1,6 +1,6 @@
 # SpectraForge Metal
 
-**High-performance GPU path tracer for Apple Silicon**
+**Elementary GPU path tracer for Apple Silicon**
 
 Achieves **3.9 billion rays/second** on M4 Pro with full path tracing, BVH acceleration, and real-time preview.
 
