@@ -77,9 +77,17 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -f $(OUTPUT_DIR)/*.png
 
-# Run tests
+# Run quick render test
 test: all
 	cd $(BUILD_DIR)/.. && ./$(TARGET) --width 200 --height 150 --samples 2
+
+# Run parameter verification tests (requires Python)
+test-params: all
+	cd $(BUILD_DIR)/.. && python tests/test_parameters.py --quick
+
+# Run full parameter test suite
+test-params-full: all
+	cd $(BUILD_DIR)/.. && python tests/test_parameters.py --verbose
 
 # Performance benchmark
 benchmark: all
@@ -101,12 +109,14 @@ help:
 	@echo "      No Metal toolchain installation required!"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all        - Build executable (default)"
-	@echo "  debug      - Build with debug symbols"
-	@echo "  run        - Build and run with default settings"
-	@echo "  preview    - Quick preview render (800x600, 4 spp)"
-	@echo "  render     - High quality render (1920x1080, 256 spp)"
-	@echo "  benchmark  - Run performance benchmark"
-	@echo "  test       - Quick test render"
-	@echo "  clean      - Remove build artifacts"
-	@echo "  help       - Show this help"
+	@echo "  all             - Build executable (default)"
+	@echo "  debug           - Build with debug symbols"
+	@echo "  run             - Build and run with default settings"
+	@echo "  preview         - Quick preview render (800x600, 4 spp)"
+	@echo "  render          - High quality render (1920x1080, 256 spp)"
+	@echo "  benchmark       - Run performance benchmark"
+	@echo "  test            - Quick test render"
+	@echo "  test-params     - Verify UI parameters affect output (quick)"
+	@echo "  test-params-full- Full parameter verification with details"
+	@echo "  clean           - Remove build artifacts"
+	@echo "  help            - Show this help"

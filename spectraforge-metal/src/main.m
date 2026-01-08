@@ -811,7 +811,8 @@ int main(int argc, char* argv[]) {
             .background_r = 0.0f,
             .background_g = 0.0f,
             .background_b = 0.0f,
-            .num_primitive_indices = 0
+            .num_primitive_indices = 0,
+            .debug_mode = opts.debug_mode
         };
 
         // Camera will be set up based on scene

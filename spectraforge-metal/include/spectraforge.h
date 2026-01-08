@@ -192,7 +192,8 @@ typedef struct {
     uint32_t use_sky_gradient;  // Use gradient sky? (48 total)
 
     uint32_t num_primitive_indices;  // For combined BVH (>0 = use combined)
-    uint32_t _pad[3];           // Pad to 64 bytes
+    uint32_t debug_mode;        // 0=normal, 1=normals, 2=depth
+    uint32_t _pad[2];           // Pad to 64 bytes
 } RenderSettings;
 
 // ============================================================================

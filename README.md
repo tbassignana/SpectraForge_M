@@ -64,10 +64,65 @@ BVH acceleration enables 17× more primitives with only 40% overhead.
 
 ## Requirements
 
-- macOS with Apple Silicon (M1/M2/M3/M4)
+- macOS with Apple Silicon
 - Xcode Command Line Tools (`xcode-select --install`)
 
 No Metal toolchain required - shaders compile at runtime from source.
+
+## Web UI
+
+The browser-based interface provides real-time control over all rendering parameters:
+
+```bash
+python ui_server.py
+# Opens http://localhost:8080 in your browser
+```
+
+### Render Parameters
+
+| Parameter | Range | Effect on Image |
+|-----------|-------|-----------------|
+| **Width/Height** | 50-3840px | Image resolution. Higher = more detail but slower render |
+| **Samples** | 1-10000 | Samples per pixel. More samples = less noise, smoother image. 16 for preview, 256+ for production |
+| **Max Depth** | 1-100 | Maximum ray bounces. Affects reflections/refractions. 2-3 = matte only, 10+ = glass/mirrors |
+
+### Quality Presets
+
+| Preset | Resolution | Samples | Use Case |
+|--------|-----------|---------|----------|
+| Preview | 800×600 | 16 | Quick preview (~0.1s) |
+| Draft | 1280×720 | 32 | Layout check (~0.2s) |
+| Medium | 1920×1080 | 64 | Good quality (~0.4s) |
+| High | 1920×1080 | 256 | Production (~1.5s) |
+
+### Scene Presets
+
+| Scene | Description |
+|-------|-------------|
+| **Demo** | Random spheres with mixed materials - good for testing |
+| **Cornell Box** | Classic enclosed room for lighting validation |
+| **PBR** | Physically-based material showcase (metal, glass, rough) |
+| **DOF** | Depth of field demonstration with bokeh |
+| **Motion** | Moving spheres with motion blur trails |
+
+### Camera Controls
+
+| Parameter | Effect on Image |
+|-----------|-----------------|
+| **Position (X,Y,Z)** | Where the camera is located in 3D space |
+| **Look At (X,Y,Z)** | Point the camera aims at (scene center is usually 0,0,0) |
+| **FOV** | Field of view in degrees. 20° = telephoto, 90° = wide angle |
+| **Aperture** | Lens opening size. 0 = everything sharp, 0.1+ = depth blur (DOF) |
+| **Focus Distance** | Distance to the focal plane. Objects at this distance are sharpest |
+
+### Post-Processing (Experimental)
+
+| Parameter | Effect |
+|-----------|--------|
+| **Tone Mapping** | Converts HDR to displayable range. ACES = cinematic, Reinhard = natural |
+| **Bloom** | Glow effect around bright areas |
+| **Exposure** | Overall brightness adjustment (-3 to +3 stops) |
+| **Denoise** | Reduces noise (not yet implemented in GPU renderer) |
 
 ## Command Line Options
 
@@ -141,6 +196,23 @@ spectraforge-metal/
 - **Compute Shaders** - Path tracing, BVH traversal, post-processing
 - **Progressive Rendering** - Accumulate samples across frames
 - **Adaptive Quality** - Low samples while moving, high when still
+
+## Testing
+
+Run the parameter verification tests to ensure all UI controls affect the rendered output:
+
+```bash
+# Quick test (5 core parameters)
+python tests/test_parameters.py --quick
+
+# Full test suite (all parameters + debug modes)
+python tests/test_parameters.py
+
+# Verbose output with image hashes
+python tests/test_parameters.py --verbose
+```
+
+The tests render images with different parameter values and compare them to verify changes are applied. Requires PIL/Pillow for pixel-level comparison (`pip install Pillow`), falls back to hash comparison otherwise.
 
 ## License
 

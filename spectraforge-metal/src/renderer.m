@@ -26,6 +26,7 @@ struct MetalRenderer {
     id<MTLComputePipelineState> pathTracePipeline;
     id<MTLComputePipelineState> simpleRenderPipeline;
     id<MTLComputePipelineState> debugNormalsPipeline;
+    id<MTLComputePipelineState> debugDepthPipeline;
     id<MTLComputePipelineState> tonemapPipeline;
 
     // Bloom pipelines
@@ -259,6 +260,7 @@ MetalRenderer* sf_renderer_create(void) {
     renderer->pathTracePipeline = createPipeline(renderer->device, renderer->library, "path_trace_kernel");
     renderer->simpleRenderPipeline = createPipeline(renderer->device, renderer->library, "simple_render_kernel");
     renderer->debugNormalsPipeline = createPipeline(renderer->device, renderer->library, "debug_normals_kernel");
+    renderer->debugDepthPipeline = createPipeline(renderer->device, renderer->library, "debug_depth_kernel");
     renderer->tonemapPipeline = createPipeline(renderer->device, renderer->library, "tonemap_simple_kernel");
 
     // Bloom pipelines
@@ -430,9 +432,40 @@ void sf_renderer_render(MetalRenderer* renderer, float* output) {
     id<MTLCommandBuffer> commandBuffer = [renderer->commandQueue commandBuffer];
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
 
-    // Choose pipeline based on whether BVH is available
+    // Calculate thread groups (needed for all pipelines)
+    MTLSize gridSize = MTLSizeMake(renderer->settings.width, renderer->settings.height, 1);
+
+    // Choose pipeline based on debug mode or normal rendering
     id<MTLComputePipelineState> pipeline;
-    if (renderer->settings.num_bvh_nodes > 0 && renderer->pathTracePipeline) {
+    bool skipPostProcessing = false;
+
+    if (renderer->settings.debug_mode == 1 && renderer->debugNormalsPipeline) {
+        // Debug normals mode
+        pipeline = renderer->debugNormalsPipeline;
+        [encoder setComputePipelineState:pipeline];
+
+        // Set buffers for debug_normals_kernel
+        [encoder setBuffer:renderer->outputBuffer offset:0 atIndex:0];
+        [encoder setBuffer:renderer->sphereBuffer offset:0 atIndex:1];
+        [encoder setBuffer:renderer->cameraBuffer offset:0 atIndex:2];
+        [encoder setBuffer:renderer->settingsBuffer offset:0 atIndex:3];
+
+        skipPostProcessing = true;  // Debug output is already final
+
+    } else if (renderer->settings.debug_mode == 2 && renderer->debugDepthPipeline) {
+        // Debug depth mode
+        pipeline = renderer->debugDepthPipeline;
+        [encoder setComputePipelineState:pipeline];
+
+        // Set buffers for debug_depth_kernel
+        [encoder setBuffer:renderer->outputBuffer offset:0 atIndex:0];
+        [encoder setBuffer:renderer->sphereBuffer offset:0 atIndex:1];
+        [encoder setBuffer:renderer->cameraBuffer offset:0 atIndex:2];
+        [encoder setBuffer:renderer->settingsBuffer offset:0 atIndex:3];
+
+        skipPostProcessing = true;  // Debug output is already final
+
+    } else if (renderer->settings.num_bvh_nodes > 0 && renderer->pathTracePipeline) {
         // Use full path tracer with BVH
         pipeline = renderer->pathTracePipeline;
         [encoder setComputePipelineState:pipeline];
@@ -462,7 +495,6 @@ void sf_renderer_render(MetalRenderer* renderer, float* output) {
     }
 
     // Calculate thread groups
-    MTLSize gridSize = MTLSizeMake(renderer->settings.width, renderer->settings.height, 1);
     NSUInteger threadGroupWidth = pipeline.threadExecutionWidth;
     NSUInteger threadGroupHeight = pipeline.maxTotalThreadsPerThreadgroup / threadGroupWidth;
     MTLSize threadGroupSize = MTLSizeMake(threadGroupWidth, threadGroupHeight, 1);
@@ -470,7 +502,7 @@ void sf_renderer_render(MetalRenderer* renderer, float* output) {
     [encoder dispatchThreads:gridSize threadsPerThreadgroup:threadGroupSize];
     [encoder endEncoding];
 
-    // Post-processing with bloom
+    // Post-processing with bloom (skip for debug modes)
     uint32_t width = renderer->settings.width;
     uint32_t height = renderer->settings.height;
     float exposure = 0.0f;  // exposure in stops
@@ -481,7 +513,7 @@ void sf_renderer_render(MetalRenderer* renderer, float* output) {
     float bloom_intensity = 0.3f;      // Bloom strength
     int bloom_blur_passes = 3;         // Number of blur iterations (wider = more glow)
 
-    if (renderer->bloomThresholdPipeline && renderer->bloomBlurHPipeline &&
+    if (!skipPostProcessing && renderer->bloomThresholdPipeline && renderer->bloomBlurHPipeline &&
         renderer->bloomBlurVPipeline && renderer->bloomCombinePipeline) {
 
         NSUInteger ppWidth = renderer->bloomThresholdPipeline.threadExecutionWidth;
@@ -536,7 +568,7 @@ void sf_renderer_render(MetalRenderer* renderer, float* output) {
         [combineEncoder dispatchThreads:gridSize threadsPerThreadgroup:ppThreadGroupSize];
         [combineEncoder endEncoding];
 
-    } else if (renderer->tonemapPipeline) {
+    } else if (!skipPostProcessing && renderer->tonemapPipeline) {
         // Fallback: simple tone mapping without bloom
         id<MTLComputeCommandEncoder> ppEncoder = [commandBuffer computeCommandEncoder];
         [ppEncoder setComputePipelineState:renderer->tonemapPipeline];
