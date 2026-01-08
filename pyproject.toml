@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spectraforge"
+version = "0.1.0"
+description = "A Python ray tracing renderer with PBR materials, global illumination, and multi-threaded acceleration"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "SpectraForge Team"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: 3D Rendering",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.20.0",
+    "Pillow>=9.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+yaml = [
+    "PyYAML>=6.0.0",
+]
+hdr = [
+    "OpenEXR>=3.0.0",
+]
+denoise = [
+    "oidn>=2.0.0",
+]
+all = [
+    "PyYAML>=6.0.0",
+    "OpenEXR>=3.0.0",
+    "oidn>=2.0.0",
+]
+
+[project.scripts]
+spectraforge = "spectraforge.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["spectraforge*"]

@@ -1,0 +1,105 @@
+{
+  "render": {
+    "width": 800,
+    "height": 450,
+    "samples": 100,
+    "max_depth": 50,
+    "threads": 0
+  },
+
+  "camera": {
+    "look_from": [13, 2, 3],
+    "look_at": [0, 0, 0],
+    "vup": [0, 1, 0],
+    "vfov": 20,
+    "aspect_ratio": 1.777,
+    "aperture": 0.1,
+    "focus_dist": 10
+  },
+
+  "materials": {
+    "ground": {
+      "type": "lambertian",
+      "albedo": [0.5, 0.5, 0.5]
+    },
+    "center_glass": {
+      "type": "dielectric",
+      "ior": 1.5
+    },
+    "left_matte": {
+      "type": "lambertian",
+      "albedo": [0.4, 0.2, 0.1]
+    },
+    "right_metal": {
+      "type": "metal",
+      "albedo": [0.7, 0.6, 0.5],
+      "roughness": 0.0
+    },
+    "gold": {
+      "type": "pbr",
+      "albedo": [1.0, 0.766, 0.336],
+      "metallic": 1.0,
+      "roughness": 0.3
+    },
+    "rough_red": {
+      "type": "pbr",
+      "albedo": [0.8, 0.1, 0.1],
+      "metallic": 0.0,
+      "roughness": 0.8
+    },
+    "blue_light": {
+      "type": "emissive",
+      "color": [0.5, 0.7, 1.0],
+      "intensity": 5.0
+    }
+  },
+
+  "objects": [
+    {
+      "type": "sphere",
+      "center": [0, -1000, 0],
+      "radius": 1000,
+      "material": "ground"
+    },
+    {
+      "type": "sphere",
+      "center": [0, 1, 0],
+      "radius": 1.0,
+      "material": "center_glass"
+    },
+    {
+      "type": "sphere",
+      "center": [-4, 1, 0],
+      "radius": 1.0,
+      "material": "left_matte"
+    },
+    {
+      "type": "sphere",
+      "center": [4, 1, 0],
+      "radius": 1.0,
+      "material": "right_metal"
+    },
+    {
+      "type": "sphere",
+      "center": [1.5, 0.5, 2],
+      "radius": 0.5,
+      "material": "gold"
+    },
+    {
+      "type": "sphere",
+      "center": [-1.5, 0.5, 2],
+      "radius": 0.5,
+      "material": "rough_red"
+    }
+  ],
+
+  "lights": [
+    {
+      "type": "sphere",
+      "center": [0, 10, 0],
+      "radius": 2,
+      "color": [1, 1, 1],
+      "intensity": 5.0
+    }
+  ]
+}

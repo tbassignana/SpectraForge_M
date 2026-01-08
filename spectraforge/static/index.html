@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpectraForge Ray Tracer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>SpectraForge</h1>
+            <span class="subtitle">Ray Tracing Renderer</span>
+            <div class="platform-info" id="platformInfo"></div>
+        </header>
+
+        <main class="app-main">
+            <aside class="sidebar">
+                <section class="panel">
+                    <h2>Scene</h2>
+                    <div class="form-group">
+                        <label for="scenePreset">Preset</label>
+                        <select id="scenePreset">
+                            <option value="demo" selected>Demo Scene</option>
+                            <option value="cornell">Cornell Box</option>
+                            <option value="minimal">Minimal</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2>Render Settings</h2>
+                    <div class="form-group">
+                        <label for="qualityPreset">Quality</label>
+                        <select id="qualityPreset">
+                            <option value="preview" selected>Preview (fast)</option>
+                            <option value="draft">Draft</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High (slow)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="width">Width</label>
+                        <input type="number" id="width" value="160" min="50" max="3840" step="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Height</label>
+                        <input type="number" id="height" value="120" min="50" max="2160" step="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="samples">Samples</label>
+                        <input type="number" id="samples" value="4" min="1" max="10000">
+                    </div>
+                    <div class="form-group">
+                        <label for="maxDepth">Max Depth</label>
+                        <input type="number" id="maxDepth" value="5" min="1" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="threads">Threads</label>
+                        <input type="number" id="threads" value="0" min="0" max="128">
+                        <span class="hint">0 = auto</span>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2>Camera</h2>
+                    <div class="form-group">
+                        <label>Position</label>
+                        <div class="vector-input">
+                            <input type="number" id="camPosX" value="13" step="0.5">
+                            <input type="number" id="camPosY" value="2" step="0.5">
+                            <input type="number" id="camPosZ" value="3" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Look At</label>
+                        <div class="vector-input">
+                            <input type="number" id="camLookX" value="0" step="0.5">
+                            <input type="number" id="camLookY" value="0" step="0.5">
+                            <input type="number" id="camLookZ" value="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fov">FOV</label>
+                        <input type="range" id="fov" value="20" min="5" max="120">
+                        <span class="value-display" id="fovValue">20</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="aperture">Aperture</label>
+                        <input type="range" id="aperture" value="0.1" min="0" max="2" step="0.01">
+                        <span class="value-display" id="apertureValue">0.1</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusDist">Focus Dist</label>
+                        <input type="number" id="focusDist" value="10" min="0.1" max="100" step="0.5">
+                    </div>
+                </section>
+
+                <section class="panel collapsible">
+                    <h2 onclick="togglePanel(this)">Post-Processing <span class="toggle-icon">+</span></h2>
+                    <div class="panel-content collapsed">
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="denoise">
+                            <label for="denoise">Denoise</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="toneMapping">Tone Mapping</label>
+                            <select id="toneMapping">
+                                <option value="none">None</option>
+                                <option value="reinhard">Reinhard</option>
+                                <option value="aces" selected>ACES Filmic</option>
+                                <option value="uncharted2">Uncharted 2</option>
+                            </select>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="bloom">
+                            <label for="bloom">Bloom</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="exposure">Exposure</label>
+                            <input type="range" id="exposure" value="0" min="-3" max="3" step="0.1">
+                            <span class="value-display" id="exposureValue">0</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+
+            <div class="render-area">
+                <div class="render-viewport" id="renderViewport">
+                    <div class="placeholder" id="placeholder">
+                        <div class="placeholder-icon">&#127912;</div>
+                        <p>Click "Render" to start</p>
+                    </div>
+                    <canvas id="renderCanvas"></canvas>
+                    <img id="renderImage" style="display: none;">
+                </div>
+
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <span class="progress-text" id="progressText">Ready</span>
+                </div>
+
+                <div class="render-controls">
+                    <button id="renderBtn" class="btn btn-primary">
+                        <span class="icon">&#9658;</span> Render
+                    </button>
+                    <button id="cancelBtn" class="btn btn-danger" disabled>
+                        <span class="icon">&#9632;</span> Cancel
+                    </button>
+                    <button id="downloadBtn" class="btn btn-secondary" disabled>
+                        <span class="icon">&#128190;</span> Download
+                    </button>
+                </div>
+
+                <div class="render-info" id="renderInfo">
+                    <span id="renderTime"></span>
+                    <span id="renderSize"></span>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <span>SpectraForge v0.1.0</span>
+            <span>|</span>
+            <span id="statusText">Ready</span>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
